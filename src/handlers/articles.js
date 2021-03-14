@@ -29,9 +29,10 @@ export default {
     try {
       const article = await Article.create(req.body);
       if (req.body.author) {
-        const authorId = req.body.author.id;
-        const author = await Author.findOne({ where: { id: authorId } });
-        article.setAuthor(author);
+        const author = await Author.findOne({
+          where: { id: req.body.author.id },
+        });
+        await article.setAuthor(author);
         await article.reload({ include: ["author"] });
       }
       if (req.body.regions) {
@@ -45,7 +46,14 @@ export default {
   },
   update: async (req, res, next) => {
     try {
-      await Article.update(req.body, { where: { id: req.params.articleId } });
+      await Article.update(
+        {
+          title: req.body.title,
+          content: req.body.content,
+          authorId: req.body.author.id,
+        },
+        { where: { id: req.params.articleId } }
+      );
       const article = await Article.findByPk(req.params.articleId, {
         include: ["author", "regions"],
       });
