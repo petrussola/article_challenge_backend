@@ -45,12 +45,13 @@ export default {
     }
   },
   update: async (req, res, next) => {
+    const authorId = req.body.author ? req.body.author.id : null;
     try {
       await Article.update(
         {
           title: req.body.title,
           content: req.body.content,
-          authorId: req.body.author.id,
+          authorId: authorId,
         },
         { where: { id: req.params.articleId } }
       );
